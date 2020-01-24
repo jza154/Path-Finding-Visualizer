@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import Joyride from 'react-joyride';
 import Node from './Node/Node';
 import {dijkstra, getNodesInShortestPathOrder} from '../algorithms/dijkstra';
 
@@ -15,6 +16,35 @@ export default class PathfindingVisualizer extends Component {
     this.state = {
       grid: [],
       mouseIsPressed: false,
+      steps: [
+      {
+        target: '#headerDijkstra',
+        content: 'Welcome to Dijkstra Algorithm Visualizer Tour. Press skip to close the tour',
+        disableBeacon: true,
+      },
+      {
+        target: '#node-10-15',
+        content: 'This is the Start Node',
+      },
+      {
+        target: '#node-10-35',
+        content: 'This is the Destination Node',
+      },
+      {
+        target: '#node-10-24',
+        content: 'Click/Drag anywhere on the grid to build walls (barriers), the Dijkstra Algorithm cannot pass through walls.'
+      },
+        {
+        target: '#buttonVisualizeDijkstra',
+        content: 'Click here to begin Dijkstra Algorithm Visualizer'
+      },
+      {
+        target: '#buttonRefresh',
+        content: 'Click here to reset Dijkstra Algorithm Visualizer'
+      },
+
+      ],
+      run: true
     };
   }
 
@@ -71,16 +101,56 @@ export default class PathfindingVisualizer extends Component {
     const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
     const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
     this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
+    //change the color of BUTTON to red once button is clicked
+    var x = document.getElementById("buttonVisualizeDijkstra");
+    x.style.color = "red"; 
+  }
+
+  refreshPage() { 
+    window.location.reload(); 
+  }
+
+  takeTour() { 
+    alert("Click on the Black Button to Take Tour");
   }
 
   render() {
-    const {grid, mouseIsPressed} = this.state;
+    const {grid, mouseIsPressed, steps, run} = this.state;
 
     return (
-      <>
-        <button onClick={() => this.visualizeDijkstra()}>
+      <> 
+        <div>
+        <h2 id='headerDijkstra'>  Dijkstra's Algorithm Visualizer</h2>
+        </div>
+        <Joyride
+          run={run}
+          steps={steps}
+          continuous
+          showProgress
+          showSkipButton
+          styles={{
+            options: {
+              arrowColor: '#e3ffeb',
+              backgroundColor: '#e3ffeb',
+              overlayColor: 'rgba(79, 26, 0, 0.4)',
+              primaryColor: '#000',
+              textColor: '#004a14',
+              width: 500,
+              zIndex: 1000
+            }
+          }}
+        />
+        {'\n'}    
+        <button id="buttonVisualizeDijkstra" onClick={() => this.visualizeDijkstra()}>
+
           Visualize Dijkstra's Algorithm
         </button>
+        {'\n'}   
+        <button id="buttonRefresh" onClick={() => this.refreshPage()}>
+           Reset
+        </button>
+
+
         <div className="grid">
           {grid.map((row, rowIdx) => {
             return (
@@ -147,3 +217,5 @@ const getNewGridWithWallToggled = (grid, row, col) => {
   newGrid[row][col] = newNode;
   return newGrid;
 };
+
+
